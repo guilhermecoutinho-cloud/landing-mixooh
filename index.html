@@ -46,14 +46,24 @@
       overflow-x: hidden;
     }
 
-    /* ══ Canvas de partículas (fundo global) ══ */
-    #particles-canvas {
+    /* ══ Canvas LED panel (fundo) ══ */
+    #led-canvas {
       position: fixed;
       inset: 0;
       width: 100%;
       height: 100%;
       pointer-events: none;
       z-index: 0;
+    }
+
+    /* ══ Canvas de partículas ══ */
+    #particles-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
     }
 
     /* ══ Layout ══ */
@@ -629,6 +639,8 @@
 </head>
 <body>
 
+<!-- Canvas LED Panel -->
+<canvas id="led-canvas" aria-hidden="true"></canvas>
 <!-- Canvas de partículas -->
 <canvas id="particles-canvas" aria-hidden="true"></canvas>
 
@@ -782,6 +794,101 @@
 </div>
 
 <script>
+/* ════════════════════════════════════════
+   LED PANEL — Canvas
+════════════════════════════════════════ */
+(function () {
+  const canvas = document.getElementById('led-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  const CELL  = 18;   // Espaçamento entre LEDs
+  const R     = 2.8;  // Raio de cada LED
+
+  let W, H, cols, rows, time = 0;
+  let grid = [];
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    cols = Math.ceil(W / CELL) + 2;
+    rows = Math.ceil(H / CELL) + 2;
+
+    grid = [];
+    for (let r = 0; r < rows; r++) {
+      grid[r] = [];
+      for (let c = 0; c < cols; c++) {
+        grid[r][c] = {
+          offset:  Math.random() * Math.PI * 2,
+          speed:   0.4 + Math.random() * 0.8,
+          // 15% dos LEDs são brancos, resto azul
+          isWhite: Math.random() < 0.15,
+          // LED base sempre ligeiramente visível
+          base:    0.04 + Math.random() * 0.06,
+        };
+      }
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    time += 0.012;
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        const led = grid[r][c];
+        const x   = c * CELL;
+        const y   = r * CELL;
+
+        // Ondas que varrem o painel
+        const wave1 = Math.sin(c * 0.18 + time * 1.2) * 0.5 + 0.5;
+        const wave2 = Math.cos(r * 0.14 + time * 0.9) * 0.5 + 0.5;
+        const wave3 = Math.sin((c + r) * 0.12 - time * 0.7) * 0.5 + 0.5;
+
+        // Pulso individual de cada LED
+        const pulse = Math.sin(led.offset + time * led.speed) * 0.5 + 0.5;
+
+        // Combina ondas com peso
+        const combined = wave1 * 0.35 + wave2 * 0.3 + wave3 * 0.2 + pulse * 0.15;
+        const alpha    = led.base + combined * 0.28;
+
+        // Cor do LED
+        const color = led.isWhite
+          ? `rgba(200, 230, 255, ${alpha})`
+          : `rgba(26, 143, 255, ${alpha})`;
+
+        // Desenha LED base
+        ctx.beginPath();
+        ctx.arc(x, y, R, 0, Math.PI * 2);
+        ctx.fillStyle = color;
+        ctx.fill();
+
+        // Glow nos LEDs mais brilhantes
+        if (combined > 0.72) {
+          const glowAlpha = (combined - 0.72) / 0.28 * 0.55;
+          ctx.shadowBlur   = 12;
+          ctx.shadowColor  = led.isWhite
+            ? `rgba(180, 220, 255, ${glowAlpha})`
+            : `rgba(26, 143, 255, ${glowAlpha})`;
+          ctx.beginPath();
+          ctx.arc(x, y, R, 0, Math.PI * 2);
+          ctx.fillStyle = led.isWhite
+            ? `rgba(220, 240, 255, ${glowAlpha * 0.9})`
+            : `rgba(91, 184, 255, ${glowAlpha * 0.9})`;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); });
+  resize();
+  draw();
+})();
+
+
 /* ════════════════════════════════════════
    PARTÍCULAS — Canvas
 ════════════════════════════════════════ */
