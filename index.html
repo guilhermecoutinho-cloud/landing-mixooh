@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MIX OOH — Digital Indoor Media</title>
+  <meta name="description" content="Cadastre-se e descubra como a MIX OOH conecta sua marca ao público certo com Digital Indoor Media." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:       #000000;
+      --black-hero:  #050508;
+      --black-panel: #0C0C10;
+      --black-input: #16161C;
+      --border:      rgba(255,255,255,0.07);
+
+      --blue:        #1A8FFF;
+      --blue-bright: #5BB8FF;
+      --blue-deep:   #0A5FBB;
+      --blue-glow:   rgba(26, 143, 255, 0.22);
+
+      --white:       #FFFFFF;
+      --w80:         rgba(255,255,255,0.80);
+      --w50:         rgba(255,255,255,0.50);
+      --w30:         rgba(255,255,255,0.28);
+      --w10:         rgba(255,255,255,0.07);
+
+      --radius:   8px;
+      --radius-lg: 14px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--black);
+      color: var(--white);
+      -webkit-font-smoothing: antialiased;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ══ Canvas de partículas (fundo global) ══ */
+    #particles-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ══ Layout ══ */
+    .page-wrapper {
+      display: grid;
+      grid-template-columns: 55% 45%;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ══════════════════════════
+       HERO — ESQUERDA
+    ══════════════════════════ */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 72px 60px 64px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Glow orbs animados */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      filter: blur(80px);
+    }
+
+    .orb-1 {
+      width: 500px;
+      height: 500px;
+      top: -120px;
+      right: -100px;
+      background: radial-gradient(circle, rgba(26,143,255,0.20) 0%, transparent 70%);
+      animation: orbFloat1 8s ease-in-out infinite;
+    }
+
+    .orb-2 {
+      width: 350px;
+      height: 350px;
+      bottom: -80px;
+      left: -60px;
+      background: radial-gradient(circle, rgba(26,143,255,0.12) 0%, transparent 70%);
+      animation: orbFloat2 10s ease-in-out infinite;
+    }
+
+    .orb-3 {
+      width: 200px;
+      height: 200px;
+      top: 45%;
+      left: 30%;
+      background: radial-gradient(circle, rgba(91,184,255,0.08) 0%, transparent 70%);
+      animation: orbFloat3 6s ease-in-out infinite;
+    }
+
+    @keyframes orbFloat1 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50%       { transform: translate(30px, 40px) scale(1.08); }
+    }
+    @keyframes orbFloat2 {
+      0%, 100% { transform: translate(0, 0) scale(1); }
+      50%       { transform: translate(-20px, -30px) scale(1.05); }
+    }
+    @keyframes orbFloat3 {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+      50%       { transform: translate(15px, -20px) scale(1.2); opacity: 1; }
+    }
+
+    /* Flare line — referência ao logo */
+    .flare-line {
+      position: absolute;
+      top: 52%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(26,143,255,0) 10%,
+        rgba(26,143,255,0.5) 40%,
+        rgba(140,210,255,1) 50%,
+        rgba(26,143,255,0.5) 60%,
+        rgba(26,143,255,0) 90%,
+        transparent 100%
+      );
+      opacity: 0;
+      animation: flareReveal 2s 1.8s ease forwards;
+      pointer-events: none;
+    }
+
+    @keyframes flareReveal {
+      0%   { opacity: 0; transform: scaleX(0.3); }
+      60%  { opacity: 0.45; }
+      100% { opacity: 0.28; transform: scaleX(1); }
+    }
+
+    .hero-content { position: relative; z-index: 2; }
+
+    /* Logo */
+    .logo {
+      display: block;
+      margin-bottom: 64px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.2s ease forwards;
+    }
+
+    .logo img {
+      height: 140px;
+      width: auto;
+      display: block;
+      object-fit: contain;
+    }
+
+    /* Fallback texto */
+    .logo-fallback { display: none; }
+
+    .logo-fallback-name {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 62px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 12px;
+      line-height: 1;
+    }
+
+    .logo-fallback-sub {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--blue-bright);
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      margin-top: 12px;
+    }
+
+    /* Badge animado */
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(26,143,255,0.08);
+      border: 1px solid rgba(26,143,255,0.22);
+      color: var(--blue-bright);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 7px 18px;
+      border-radius: 100px;
+      margin-bottom: 30px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.4s ease forwards;
+    }
+
+    /* Ponto pulsante */
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: var(--blue);
+      border-radius: 50%;
+      position: relative;
+      box-shadow: 0 0 8px var(--blue);
+    }
+
+    .pulse-dot::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 1.5px solid var(--blue);
+      animation: pulse 2s ease-in-out infinite;
+      opacity: 0;
+    }
+
+    @keyframes pulse {
+      0%   { transform: scale(0.8); opacity: 0.8; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+
+    /* Headline */
+    .hero-headline {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(42px, 5vw, 72px);
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.08;
+      letter-spacing: -1px;
+      margin-bottom: 28px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.55s ease forwards;
+    }
+
+    .hero-headline .line { display: block; overflow: hidden; }
+
+    .hero-headline em {
+      font-style: italic;
+      color: transparent;
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-bright) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+    }
+
+    /* Sub */
+    .hero-sub {
+      font-size: 18px;
+      color: var(--w50);
+      line-height: 1.72;
+      font-weight: 300;
+      max-width: 480px;
+      margin-bottom: 56px;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.7s ease forwards;
+    }
+
+    /* Stats */
+    .stats {
+      display: flex;
+      gap: 0;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.85s ease forwards;
+    }
+
+    .stat {
+      padding-right: 36px;
+      border-right: 1px solid var(--border);
+      margin-right: 36px;
+    }
+
+    .stat:last-child { border-right: none; margin-right: 0; padding-right: 0; }
+
+    .stat-number {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 52px;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1;
+      letter-spacing: -1.5px;
+    }
+
+    .stat-number span { color: var(--blue-bright); }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--w30);
+      font-weight: 500;
+      margin-top: 7px;
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+    }
+
+    /* ══════════════════════════
+       FORMULÁRIO — DIREITA
+    ══════════════════════════ */
+    .form-panel {
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 52px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Glow interno no painel do form */
+    .form-panel::before {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, rgba(26,143,255,0.6) 50%, transparent 100%);
+    }
+
+    .form-panel::after {
+      content: '';
+      position: absolute;
+      bottom: -180px;
+      right: -100px;
+      width: 320px;
+      height: 320px;
+      background: radial-gradient(circle, rgba(26,143,255,0.08) 0%, transparent 70%);
+      pointer-events: none;
+      animation: orbFloat2 12s ease-in-out infinite;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 480px;
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      animation: fadeUp 0.7s 0.3s ease forwards;
+    }
+
+    /* Header do form */
+    .form-header { margin-bottom: 32px; }
+
+    .form-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--blue-bright);
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      margin-bottom: 10px;
+    }
+
+    .form-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: -0.5px;
+      line-height: 1.18;
+      margin-bottom: 10px;
+    }
+
+    .form-desc {
+      font-size: 15px;
+      color: var(--w50);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* Form */
+    .form { display: flex; flex-direction: column; gap: 16px; }
+
+    .field { display: flex; flex-direction: column; gap: 7px; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    label {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--w30);
+      text-transform: uppercase;
+      letter-spacing: 0.9px;
+    }
+
+    label .req { color: var(--blue); margin-left: 2px; }
+
+    input, select {
+      height: 52px;
+      width: 100%;
+      padding: 0 16px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      font-size: 15px;
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      color: var(--white);
+      background: var(--black-input);
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+      outline: none;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='13' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.28)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 13px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    select option { background: #1A1A22; color: var(--white); }
+
+    input::placeholder { color: rgba(255,255,255,0.22); }
+
+    input:focus, select:focus {
+      border-color: rgba(26,143,255,0.55);
+      box-shadow: 0 0 0 3px rgba(26,143,255,0.10), 0 0 16px rgba(26,143,255,0.08);
+      background: #1C1C24;
+    }
+
+    input:hover:not(:focus), select:hover:not(:focus) {
+      border-color: rgba(255,255,255,0.13);
+    }
+
+    /* Botão CTA */
+    .btn-submit {
+      height: 58px;
+      width: 100%;
+      background: linear-gradient(135deg, var(--blue) 0%, #1070DD 100%);
+      color: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      border: none;
+      border-radius: var(--radius);
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 4px 22px rgba(26,143,255,0.32), 0 0 0 1px rgba(26,143,255,0.2);
+      margin-top: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Shimmer no botão */
+    .btn-submit::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 60%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+      transition: left 0.5s;
+    }
+
+    .btn-submit:hover::before { left: 140%; }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, var(--blue-bright) 0%, var(--blue) 100%);
+      box-shadow: 0 6px 30px rgba(26,143,255,0.45), 0 0 0 1px rgba(91,184,255,0.3);
+      transform: translateY(-1px);
+    }
+
+    .btn-submit:active { transform: translateY(0) scale(0.99); }
+    .btn-submit:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+    /* Segurança */
+    .form-security {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .form-security svg { color: var(--w30); flex-shrink: 0; }
+    .form-security span { font-size: 11px; color: var(--w30); }
+
+    /* ── SUCCESS ── */
+    .success-state {
+      display: none;
+      text-align: center;
+      padding: 48px 20px;
+    }
+
+    .success-icon {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      border: 1px solid rgba(26,143,255,0.3);
+      background: rgba(26,143,255,0.07);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 28px;
+      box-shadow: 0 0 40px rgba(26,143,255,0.2);
+      animation: successGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes successGlow {
+      from { box-shadow: 0 0 20px rgba(26,143,255,0.15); }
+      to   { box-shadow: 0 0 50px rgba(26,143,255,0.35); }
+    }
+
+    .success-icon svg { color: var(--blue-bright); }
+
+    .success-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .success-desc {
+      font-size: 14px;
+      color: var(--w50);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* ── Animações gerais ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Responsivo ── */
+    @media (max-width: 960px) {
+      .page-wrapper { grid-template-columns: 1fr; }
+
+      .hero {
+        padding: 44px 28px 40px;
+        min-height: auto;
+      }
+
+      .logo {
+        margin-bottom: 36px;
+        text-align: center;
+      }
+
+      .logo img { height: 80px; }
+
+      .logo-fallback-name { font-size: 38px; letter-spacing: 7px; text-align: center; }
+      .logo-fallback-sub  { font-size: 11px; letter-spacing: 4px; text-align: center; }
+
+      .hero-headline { text-align: center; }
+      .hero-sub      { text-align: center; max-width: 100%; }
+
+      .hero-headline {
+        font-size: clamp(32px, 8vw, 48px);
+        letter-spacing: -0.5px;
+      }
+
+      .hero-sub {
+        font-size: 15px;
+        margin-bottom: 40px;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 0;
+      }
+
+      .stat {
+        padding-right: 0;
+        margin-right: 0;
+        border-right: none;
+        text-align: center;
+        padding: 0 12px;
+        border-right: 1px solid var(--border);
+      }
+
+      .stat:last-child { border-right: none; }
+
+      .stat-number { font-size: 36px; }
+      .stat-label  { font-size: 10px; }
+
+      .form-panel {
+        padding: 40px 28px;
+        border-top: none;
+        align-items: flex-start;
+        backdrop-filter: none;
+      }
+
+      .field-row { grid-template-columns: 1fr; }
+
+      .flare-line { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .hero { padding: 36px 20px 40px; }
+
+      .logo img { height: 70px; }
+
+      .logo-fallback-name { font-size: 32px; letter-spacing: 6px; }
+
+      .hero-headline { font-size: 30px; }
+
+      .hero-sub { font-size: 14px; }
+
+      .stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .stat-number { font-size: 30px; }
+
+      .form-panel { padding: 36px 20px; }
+
+      .form-title { font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Canvas de partículas -->
+<canvas id="particles-canvas" aria-hidden="true"></canvas>
+
+<div class="page-wrapper">
+
+  <!-- ════════════════ HERO ════════════════ -->
+  <aside class="hero" role="complementary">
+    <div class="orb orb-1" aria-hidden="true"></div>
+    <div class="orb orb-2" aria-hidden="true"></div>
+    <div class="orb orb-3" aria-hidden="true"></div>
+    <div class="flare-line" aria-hidden="true"></div>
+
+    <div class="hero-content">
+
+      <!-- Logo -->
+      <div class="logo" aria-label="MIX OOH Digital Indoor Media">
+        <img
+          src="logo.png"
+          alt="MIX OOH — Digital Indoor Media"
+          onerror="this.style.display='none'; document.querySelector('.logo-fallback').style.display='block';"
+        />
+        <div class="logo-fallback" aria-hidden="true">
+          <div class="logo-fallback-name">MIX OOH</div>
+          <div class="logo-fallback-sub">Digital Indoor Media</div>
+        </div>
+      </div>
+
+
+      <!-- Headline -->
+      <h1 class="hero-headline">
+        Sua marca em<br />
+        destaque onde o<br />
+        público <em>decide.</em>
+      </h1>
+
+      <p class="hero-sub">
+        A MIX OOH conecta marcas ao seu público com mídias digitais indoor de alto impacto — em shoppings, academias, clínicas, aeroportos e muito mais.
+      </p>
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-number">+<span>300</span></div>
+          <div class="stat-label">Pontos ativos</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number"><span>12</span>+</div>
+          <div class="stat-label">Cidades</div>
+        </div>
+        <div class="stat">
+          <div class="stat-number"><span>98</span>%</div>
+          <div class="stat-label">Satisfação</div>
+        </div>
+      </div>
+
+    </div>
+  </aside>
+
+  <!-- ════════════════ FORMULÁRIO ════════════════ -->
+  <main class="form-panel">
+    <div class="form-container">
+
+      <div class="form-header">
+        <h2 class="form-title">Fale com um especialista</h2>
+        <p class="form-desc">Preencha os dados abaixo e nossa equipe apresenta as melhores soluções para sua marca.</p>
+      </div>
+
+      <form id="leadForm" class="form" action="https://api.web3forms.com/submit" method="POST">
+        <input type="hidden" name="access_key" value="dcf8dd0a-cdb9-40b5-8540-fb9df6c09567" />
+        <input type="hidden" name="subject" value="Novo cadastro — MIX OOH" />
+        <input type="hidden" name="from_name" value="MIX OOH Landing Page" />
+        <input type="hidden" name="redirect" value="false" />
+
+        <div class="field">
+          <label for="nome">Nome completo <span class="req" aria-hidden="true">*</span></label>
+          <input type="text" id="nome" name="Nome Completo" placeholder="Seu nome completo" autocomplete="name" required />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="telefone">Telefone <span class="req" aria-hidden="true">*</span></label>
+            <input type="tel" id="telefone" name="Telefone" placeholder="(11) 99999-9999" autocomplete="tel" inputmode="tel" required />
+          </div>
+          <div class="field">
+            <label for="email">E-mail <span class="req" aria-hidden="true">*</span></label>
+            <input type="email" id="email" name="E-mail" placeholder="seu@email.com" autocomplete="email" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="empresa">Nome da empresa <span class="req" aria-hidden="true">*</span></label>
+          <input type="text" id="empresa" name="Nome da Empresa" placeholder="Razão social ou nome fantasia" autocomplete="organization" required />
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="cnpj">CNPJ <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="cnpj" name="CNPJ" placeholder="00.000.000/0001-00" maxlength="18" inputmode="numeric" required />
+          </div>
+          <div class="field">
+            <label for="segmento">Segmento <span class="req" aria-hidden="true">*</span></label>
+            <select id="segmento" name="Segmento" required>
+              <option value="" disabled selected>Selecione…</option>
+              <option value="varejo">Varejo</option>
+              <option value="alimentacao">Alimentação &amp; Bebidas</option>
+              <option value="saude">Saúde &amp; Bem-estar</option>
+              <option value="educacao">Educação</option>
+              <option value="financeiro">Financeiro &amp; Seguros</option>
+              <option value="tecnologia">Tecnologia</option>
+              <option value="automotivo">Automotivo</option>
+              <option value="imobiliario">Imobiliário</option>
+              <option value="moda">Moda &amp; Beleza</option>
+              <option value="entretenimento">Entretenimento</option>
+              <option value="logistica">Logística &amp; Transporte</option>
+              <option value="governo">Governo &amp; Institucional</option>
+              <option value="outro">Outro</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-submit" id="submitBtn">
+          Quero anunciar com a MIX OOH →
+        </button>
+
+        <div class="form-security">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>Seus dados estão seguros. Nunca compartilhamos com terceiros.</span>
+        </div>
+
+      </form>
+
+      <!-- Success -->
+      <div class="success-state" id="successState" role="status" aria-live="polite">
+        <div class="success-icon">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <h3 class="success-title">Cadastro recebido!</h3>
+        <p class="success-desc">
+          Em breve um especialista da MIX OOH entrará em contato para apresentar as soluções certas para a sua empresa.
+        </p>
+      </div>
+
+    </div>
+  </main>
+
+</div>
+
+<script>
+/* ════════════════════════════════════════
+   PARTÍCULAS — Canvas
+════════════════════════════════════════ */
+(function () {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  let W, H, particles = [], mouse = { x: -9999, y: -9999 };
+
+  const isMobile = window.innerWidth <= 768;
+
+  const CONFIG = {
+    count:          isMobile ? 30 : 90,
+    speedMin:       0.08,
+    speedMax:       0.35,
+    sizeMin:        0.6,
+    sizeMax:        isMobile ? 1.4 : 2.2,
+    connectionDist: isMobile ? 70 : 120,
+    mouseInfluence: 140,
+    colors: [
+      'rgba(26,143,255,',
+      'rgba(91,184,255,',
+      'rgba(140,200,255,',
+      'rgba(255,255,255,',
+    ],
+  };
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function randomBetween(a, b) { return a + Math.random() * (b - a); }
+
+  function createParticle() {
+    const colorBase = CONFIG.colors[Math.floor(Math.random() * CONFIG.colors.length)];
+    return {
+      x:     randomBetween(0, W),
+      y:     randomBetween(0, H),
+      vx:    randomBetween(-CONFIG.speedMax, CONFIG.speedMax),
+      vy:    randomBetween(-CONFIG.speedMax, CONFIG.speedMax),
+      size:  randomBetween(CONFIG.sizeMin, CONFIG.sizeMax),
+      alpha: randomBetween(0.2, 0.7),
+      colorBase,
+    };
+  }
+
+  function init() {
+    particles = [];
+    for (let i = 0; i < CONFIG.count; i++) particles.push(createParticle());
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Update & draw particles
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+
+      // Repulsão suave do mouse
+      const dx = p.x - mouse.x;
+      const dy = p.y - mouse.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < CONFIG.mouseInfluence) {
+        const force = (CONFIG.mouseInfluence - dist) / CONFIG.mouseInfluence;
+        p.vx += (dx / dist) * force * 0.4;
+        p.vy += (dy / dist) * force * 0.4;
+      }
+
+      // Fricção
+      p.vx *= 0.99;
+      p.vy *= 0.99;
+
+      // Manter velocidade mínima
+      const speed = Math.sqrt(p.vx * p.vx + p.vy * p.vy);
+      if (speed < CONFIG.speedMin) {
+        p.vx += (Math.random() - 0.5) * 0.05;
+        p.vy += (Math.random() - 0.5) * 0.05;
+      }
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      // Wrap around
+      if (p.x < -10) p.x = W + 10;
+      if (p.x > W + 10) p.x = -10;
+      if (p.y < -10) p.y = H + 10;
+      if (p.y > H + 10) p.y = -10;
+
+      // Draw particle
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = p.colorBase + p.alpha + ')';
+      ctx.fill();
+
+      // Conexões entre partículas próximas
+      for (let j = i + 1; j < particles.length; j++) {
+        const q = particles[j];
+        const ddx = p.x - q.x;
+        const ddy = p.y - q.y;
+        const d = Math.sqrt(ddx * ddx + ddy * ddy);
+        if (d < CONFIG.connectionDist) {
+          const lineAlpha = (1 - d / CONFIG.connectionDist) * 0.25;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(26,143,255,${lineAlpha})`;
+          ctx.lineWidth = 0.6;
+          ctx.stroke();
+        }
+      }
+    }
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); init(); });
+  window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+  window.addEventListener('mouseleave', () => { mouse.x = -9999; mouse.y = -9999; });
+  window.addEventListener('touchmove', e => {
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+  }, { passive: true });
+
+  resize();
+  init();
+  draw();
+})();
+
+
+/* ════════════════════════════════════════
+   MÁSCARAS
+════════════════════════════════════════ */
+document.getElementById('cnpj').addEventListener('input', function () {
+  let v = this.value.replace(/\D/g, '').slice(0, 14);
+  if (v.length > 12)      v = v.replace(/^(\d{2})(\d{3})(\d{3})(\d{4})(\d{0,2})/, '$1.$2.$3/$4-$5');
+  else if (v.length > 8)  v = v.replace(/^(\d{2})(\d{3})(\d{3})(\d{0,4})/, '$1.$2.$3/$4');
+  else if (v.length > 5)  v = v.replace(/^(\d{2})(\d{3})(\d{0,3})/, '$1.$2.$3');
+  else if (v.length > 2)  v = v.replace(/^(\d{2})(\d{0,3})/, '$1.$2');
+  this.value = v;
+});
+
+document.getElementById('telefone').addEventListener('input', function () {
+  let v = this.value.replace(/\D/g, '').slice(0, 11);
+  if (v.length > 10)     v = v.replace(/^(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3');
+  else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+  else if (v.length > 2) v = v.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
+  else if (v.length > 0) v = '(' + v;
+  this.value = v;
+});
+
+
+/* ════════════════════════════════════════
+   FORMULÁRIO
+════════════════════════════════════════ */
+const form      = document.getElementById('leadForm');
+const submitBtn = document.getElementById('submitBtn');
+const successEl = document.getElementById('successState');
+
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const fields = form.querySelectorAll('[required]');
+  let valid = true;
+
+  fields.forEach(f => {
+    f.style.borderColor = '';
+    f.style.boxShadow   = '';
+    const empty = f.tagName === 'SELECT' ? !f.value : !f.value.trim();
+    if (empty) {
+      f.style.borderColor = 'rgba(239,68,68,0.65)';
+      f.style.boxShadow   = '0 0 0 3px rgba(239,68,68,0.10)';
+      valid = false;
+    }
+  });
+
+  if (!valid) {
+    const first = form.querySelector('[style*="239,68"]');
+    if (first) first.focus();
+    return;
+  }
+
+  submitBtn.disabled    = true;
+  submitBtn.textContent = 'Enviando…';
+
+  const formData = new FormData(form);
+
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    body:   formData,
+  })
+    .then(res => res.json())
+    .then(json => {
+      if (json.success) {
+        form.style.display      = 'none';
+        successEl.style.display = 'block';
+      } else {
+        throw new Error('Falha no envio');
+      }
+    })
+    .catch(() => {
+      // Fallback: envio direto via submit nativo
+      form.submit();
+    });
+});
+
+form.querySelectorAll('input, select').forEach(el => {
+  el.addEventListener('input', function () {
+    this.style.borderColor = '';
+    this.style.boxShadow   = '';
+  });
+});
+</script>
+
+</body>
+</html>
