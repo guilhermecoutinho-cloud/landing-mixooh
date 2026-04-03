@@ -1,0 +1,82 @@
+name: wf-cro-sprint
+version: "1.0.0"
+description: "Sprint de CRO de 4 semanas — pesquisa, hipóteses, testes e iteração para landing page existente"
+squad: landing-squad
+
+trigger:
+  type: manual
+  description: "Iniciado quando uma landing page existente precisa de otimização sistemática"
+
+phases:
+
+  - id: week-1-research
+    name: "Semana 1: Pesquisa & Diagnóstico"
+    steps:
+      - agent: cro-specialist
+        task: "Coletar e analisar dados — GA4 funnel, heatmaps, gravações de sessão"
+        output: "data-analysis"
+
+      - agent: peep-laja
+        task: "Auditoria heurística pelos 7 fatores de conversão CXL"
+        output: "heuristic-audit"
+
+      - agent: funnel-architect
+        task: "Mapear drop-offs no funil e identificar pontos críticos"
+        input: data-analysis
+        output: "funnel-diagnosis"
+
+  - id: week-2-hypotheses
+    name: "Semana 2: Hipóteses & Priorização"
+    steps:
+      - agent: peep-laja
+        task: "Transformar insights em hipóteses testáveis com ICE/PIE scoring"
+        input: [data-analysis, heuristic-audit, funnel-diagnosis]
+        output: "prioritized-hypotheses"
+
+      - agent: cro-specialist
+        task: "Calcular tamanho de amostra e planejar testes A/B"
+        input: prioritized-hypotheses
+        output: "test-plan"
+
+  - id: week-3-execution
+    name: "Semana 3: Execução dos Testes"
+    steps:
+      - agent: michael-aagaard
+        task: "Criar variantes de copy para testes de CTA e headline"
+        input: prioritized-hypotheses
+        output: "copy-variants"
+
+      - agent: design-squad/ui-engineer
+        task: "Implementar variantes de design para testes"
+        input: [prioritized-hypotheses, copy-variants]
+        output: "test-variants"
+
+      - agent: cro-specialist
+        task: "Lançar testes A/B e configurar monitoramento"
+        input: [test-variants, test-plan]
+        output: "running-tests"
+
+  - id: week-4-analysis
+    name: "Semana 4: Análise & Próxima Iteração"
+    steps:
+      - agent: cro-specialist
+        task: "Analisar resultados com significância estatística"
+        input: running-tests
+        output: "test-results"
+
+      - agent: peep-laja
+        task: "Extrair aprendizados e gerar hipóteses para próximo sprint"
+        input: test-results
+        output: "learnings-next-sprint"
+
+      - agent: landing-chief
+        task: "Relatório do sprint e planejamento do próximo ciclo"
+        input: [test-results, learnings-next-sprint]
+        output: "sprint-report"
+
+deliverables:
+  - "Relatório de pesquisa qualitativa e quantitativa"
+  - "10+ hipóteses priorizadas por ICE/PIE score"
+  - "Resultados de testes A/B com significância estatística"
+  - "Aprendizados documentados sobre o visitante"
+  - "Roadmap do próximo sprint de CRO"

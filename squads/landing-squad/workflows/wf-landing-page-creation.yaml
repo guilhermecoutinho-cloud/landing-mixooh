@@ -1,0 +1,145 @@
+name: wf-landing-page-creation
+version: "1.0.0"
+description: "Workflow completo para criação de landing page de alta conversão — do briefing ao lançamento"
+squad: landing-squad
+
+trigger:
+  type: manual
+  description: "Iniciado pelo landing-chief quando uma nova landing page precisa ser criada"
+
+phases:
+
+  - id: phase-1-strategy
+    name: "Estratégia & Diagnóstico"
+    parallel: false
+    steps:
+      - id: briefing
+        agent: landing-chief
+        task: "Briefing completo — objetivo, ICP, oferta, tráfego, nível de consciência"
+        output: "briefing-doc"
+
+      - id: funnel-map
+        agent: funnel-architect
+        task: "Mapear jornada do visitante e selecionar tipo de funil"
+        input: briefing-doc
+        output: "funnel-map"
+
+      - id: awareness-level
+        agent: funnel-architect
+        task: "Identificar nível de consciência do tráfego e definir approach de copy"
+        input: briefing-doc
+        output: "awareness-brief"
+
+  - id: phase-2-research
+    name: "Pesquisa de Conversão"
+    parallel: true
+    steps:
+      - id: cro-research
+        agent: peep-laja
+        task: "Pesquisa qualitativa — entrevistas, VOC, análise de concorrentes"
+        input: [briefing-doc, awareness-brief]
+        output: "research-insights"
+
+      - id: message-research
+        agent: peep-laja
+        task: "Message testing — clareza, relevância, credibilidade com ICP"
+        input: briefing-doc
+        output: "message-insights"
+
+  - id: phase-3-architecture
+    name: "Arquitetura de Página"
+    parallel: false
+    steps:
+      - id: page-structure
+        agent: oli-gardner
+        task: "Criar wireframe de seções — above/below fold, hierarquia, Attention Ratio"
+        input: [research-insights, awareness-brief, funnel-map]
+        output: "page-wireframe"
+
+      - id: offer-stack
+        agent: landing-chief
+        task: "Briefar offer stack com hormozi-squad se necessário"
+        input: briefing-doc
+        output: "offer-brief"
+
+  - id: phase-4-copy
+    name: "Copy de Conversão"
+    parallel: true
+    steps:
+      - id: main-copy
+        agent: copy-squad/eugene-schwartz
+        task: "Escrever copy principal — headline, subhead, seções — baseada no framework selecionado"
+        input: [page-wireframe, awareness-brief, research-insights, offer-brief]
+        output: "main-copy"
+
+      - id: cta-copy
+        agent: michael-aagaard
+        task: "Escrever CTAs, microcopy e copy de formulário"
+        input: [page-wireframe, research-insights]
+        output: "cta-microcopy"
+
+  - id: phase-5-design
+    name: "Design & UI"
+    parallel: false
+    steps:
+      - id: visual-design
+        agent: design-squad/visual-generator
+        task: "Design visual mobile-first — hierarquia, tipografia, cores, imagens"
+        input: [page-wireframe, main-copy, cta-microcopy]
+        output: "design-files"
+
+      - id: ui-build
+        agent: design-squad/ui-engineer
+        task: "Implementação HTML/CSS/JS responsiva e acessível"
+        input: design-files
+        output: "page-build"
+
+  - id: phase-6-performance
+    name: "Otimização de Performance"
+    parallel: false
+    steps:
+      - id: performance-audit
+        agent: performance-engineer
+        task: "Otimizar imagens, scripts, fonts — garantir LCP < 2.5s, CLS < 0.1"
+        input: page-build
+        output: "performance-report"
+
+  - id: phase-7-tracking
+    name: "Tracking & Analytics"
+    parallel: false
+    steps:
+      - id: tracking-setup
+        agent: cro-specialist
+        task: "Configurar GTM, GA4 events, Meta Pixel, Google Ads tag"
+        input: [page-build, funnel-map]
+        output: "tracking-config"
+
+      - id: funnel-integration
+        agent: funnel-architect
+        task: "Configurar página de obrigado e sequência pós-conversão"
+        input: [tracking-config, funnel-map]
+        output: "post-conversion-setup"
+
+  - id: phase-8-qa
+    name: "QA & Lançamento"
+    parallel: false
+    steps:
+      - id: conversion-qa
+        agent: landing-chief
+        task: "QA completo — message match, tracking, mobile, velocidade, formulário"
+        input: [page-build, performance-report, tracking-config]
+        output: "qa-report"
+
+      - id: ab-test-plan
+        agent: cro-specialist
+        task: "Criar plano de primeiros A/B tests priorizados por PIE score"
+        input: [qa-report, research-insights]
+        output: "ab-test-roadmap"
+
+deliverables:
+  - "Landing page publicada e funcionando"
+  - "Relatório de performance (Core Web Vitals)"
+  - "Dashboard de tracking configurado (GA4)"
+  - "Plano de A/B tests priorizados"
+  - "Sequência pós-conversão ativa"
+  - "Documentação do funil completo"

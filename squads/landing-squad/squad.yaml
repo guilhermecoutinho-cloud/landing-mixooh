@@ -1,0 +1,46 @@
+name: landing-squad
+version: "1.0.0"
+short-title: "Landing Squad"
+description: "Squad de landing page de alto impacto — CRO, performance, copy de conversão e arquitetura de funil. 3 experts (Peep Laja, Oli Gardner, Michael Aagaard) + 4 especialistas + 1 orquestrador."
+author: "Synkra AIOS"
+license: MIT
+slashPrefix: "landing-squad"
+
+aios:
+  minVersion: "4.0.0"
+  type: squad
+
+tags:
+  - landing-page
+  - cro
+  - conversion
+  - performance
+  - funnel
+  - a-b-testing
+  - core-web-vitals
+  - persuasion
+
+components:
+  agents:
+    - landing-chief.md
+    - peep-laja.md
+    - oli-gardner.md
+    - michael-aagaard.md
+    - cro-specialist.md
+    - performance-engineer.md
+    - funnel-architect.md
+  tasks:
+    - build-landing-page.md
+    - audit-conversion.md
+    - create-ab-test.md
+    - optimize-cta.md
+    - review-performance.md
+    - map-funnel.md
+  workflows:
+    - wf-landing-page-creation.yaml
+    - wf-cro-sprint.yaml
+  checklists:
+    - conversion-checklist.md
+
+config:
+  extends: extend
